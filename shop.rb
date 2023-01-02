@@ -1,59 +1,105 @@
-
-class Goods
-	def initialize
-		@mach = nil
-		@quantity = nil
+class Work
+		def read_from_console
+		line = gets.chomp.downcase.to_s
+		line = line.split(//)#ділить на массив
+		w = ""
+			for item in line do #перевіряє массив на букву"і"
+				if item == "?"
+				w << "і"
+				else 
+				w << item
+				end
+			end
+		return w.to_s#збирає в масив
+		
 	end
+
+	def write_in_file(choice)
+		to_bay = Books_and_Films.new
+		way = to_bay.way(choice)
+		file = File.new(way, "a")
+		puts 'Напишіть назву.'
+		name = read_from_console
+		file.puts("\n" + name)
+		puts 'Напишіть інформацію.'
+		infa = read_from_console
+		file.puts(infa)
+		file.close
+		puts 'Товар додано'
+		
+	end 
 end 
 
-class Books_and_Films < Goods
+
+class Books_and_Films 
 	def what(b)
+		work = Work.new
 		puts 'Що бажаєте переглянути з товару? '
-		choice = gets.chomp.downcase.to_s
+		choice = work.read_from_console
 	 
 		if b.has_key?(choice)
 			a = b[choice]
-			@mach = a[:cena]
-			@quatity = a[:quati]
-			puts "Ціна цього товару: #{@mach} грн. "  
-			puts "Кількість на складі: #{@quatity} шт." 
-
+			puts a.to_s
 		elsif choice == "все"
-			puts book.keys
+			puts b.to_s
 		else
 			puts 'Запит не виконано'
 		end 
 	end
-	
+	def way(choice)
+			current_path = File.dirname(__FILE__)
+			file_name = "#{choice}.txt"#створює назву файлу
+			return current_path + "/" + file_name#повертає шлях і назву
+	end
+	def openning(choice)
+		arr = []
+		file = File.new(way(choice))
+		arr += file.read.split("\n") 
+		file.close 
+		hash = Hash[*arr]
+		return hash
+	end
 end	
-book = {
-		"абетка" => {:cena => 2,
-			:quati => 12},
-		"словник" => {:cena => 2222,
-			:quati => 1111}
-}
-film = {
-		"гаррі потер" => {:cena => 15,
-			:quati => 28},
-		"форсаж" => {:cena => 34,
-			:quati => 1}
-}
+
 to_bay = Books_and_Films.new
+work = Work.new
 puts "Раді вас вітати в нашому магазині))
 Бажаєте переглянути книги чи фільми?"
-choice = gets.chomp.downcase.to_s
+a = work.read_from_console
 
-if choice == "книги"
-	puts "В нас є такі книги: #{book.keys}"
-	to_bay.what(book)
-elsif choice == "ф?льми"
-	puts "В нас є такі фільми: #{film.keys}"
-	to_bay.what(film)
-elsif choice == "все"
-	puts "В нас є такі книги: #{book.keys}"
-	puts "В нас є такі фільми: #{film.keys}"
-	book_and_film = book.merge(film)
+
+
+if a == "книги"
+	choice = "book"
+	hash = to_bay.openning(choice)
+	
+	puts "В нас є такі книги: #{hash.keys}"
+	to_bay.what(hash)
+elsif a == "фільми"
+	choice = "film"
+	hash = to_bay.openning(choice)
+	puts "В нас є такі фільми: #{hash.keys}"
+	to_bay.what(hash)
+elsif a == "все"
+	choice = "book"
+	hash1 = to_bay.openning(choice)
+	puts "В нас є такі книги: #{hash1.keys}"
+	choice = "film"
+	hash2 = to_bay.openning(choice)
+	puts "В нас є такі фільми: #{hash2.keys}"
+	book_and_film = hash1.merge(hash2)
 	to_bay.what(book_and_film)
+elsif a == "адмін"
+	puts 'Що бажаєте дадати книги чи фільми?'
+	b = work.read_from_console
+	if b == "книги"
+		choice = "book"
+		hash = work.write_in_file(choice)
+	elsif b == "фільми"
+		choice = "film"
+		hash = work.write_in_file(choice)
+	end 
+
 else
 	puts "Я не зрозумів"
 end 
