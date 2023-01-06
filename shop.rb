@@ -20,12 +20,34 @@ class Work
 		file = File.new(way, "a")
 		puts 'Напишіть назву.'
 		name = read_from_console
-		file.puts("\n" + name)
+		file.puts( name)
 		puts 'Напишіть інформацію.'
 		infa = read_from_console
 		file.puts(infa)
 		file.close
-		puts 'Товар додано'
+		puts 'Товар додано '
+		
+	end 
+
+	def delete_in_file(choice)
+		arr = []
+		to_bay = Books_and_Films.new
+		hash = to_bay.openning(choice)
+		puts "В нас є такі товари: #{hash.keys}"
+		puts 'Напишіть назву.'
+		name = read_from_console
+		if hash.include?(name)
+			hash.delete(name)
+			arr = Array[*hash]
+			puts arr
+			way = to_bay.way(choice)
+			file = File.new(way, "w")
+			file.puts(arr)
+			puts 'Товар видалено'
+		else
+			puts 'Товар не знайдено'
+		end 		
+		
 		
 	end 
 end 
@@ -90,14 +112,28 @@ elsif a == "все"
 	book_and_film = hash1.merge(hash2)
 	to_bay.what(book_and_film)
 elsif a == "адмін"
-	puts 'Що бажаєте дадати книги чи фільми?'
+	puts 'Бажаєт додати чи видалити?'
 	b = work.read_from_console
-	if b == "книги"
-		choice = "book"
-		hash = work.write_in_file(choice)
-	elsif b == "фільми"
-		choice = "film"
-		hash = work.write_in_file(choice)
+	if b == 'додати'
+	puts 'Що бажаєте дадати книги чи фільми?'
+		b = work.read_from_console
+		if b == "книги"
+			choice = "book"
+			hash = work.write_in_file(choice)
+		elsif b == "фільми"
+			choice = "film"
+			hash = work.write_in_file(choice)
+		end
+	elsif b == 'видалити'
+		puts 'Що бажаєте видалити книги чи фільми?'
+		b = work.read_from_console
+		if b == "книги"
+			choice = "book"
+			hash = work.delete_in_file(choice)
+		elsif b == "фільми"
+			choice = "film"
+			hash = work.delete_in_file(choice)
+		end
 	end 
 
 else
