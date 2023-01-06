@@ -25,7 +25,7 @@ class Work
 		infa = read_from_console
 		file.puts(infa)
 		file.close
-		puts 'Товар додано'
+		puts 'Товар додано '
 		
 	end 
 
