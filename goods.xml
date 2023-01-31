@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<goods>
+	<books>
+		<book name="Абетка" price="78" quantity="45">
+		</book>
+		<book name="Кобзар" price="1000" quantity="1">
+		</book>
+		<book name="Словник" price="343" quantity="21">
+		</book>
+
+	</books>
+	<films>
+		<film name="Форсаж" price="245" quantity="16">
+		</film>
+		<film name="Гаррі Потер" price="199" quantity="10">
+		</film>
+		<film name="Аватар" price="100" quantity="12">
+		</film>
+
+	</films>
+	<musics>
+		<music name="Чути Гімн" price="21" quantity="32">
+		</music>
+		<music name="Батьківщина" price="34" quantity="1">
+		</music>
+		<music name="Лист до мами" price="21" quantity="12">
+		</music>
+	</musics>
+</goods>

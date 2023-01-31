@@ -1,6 +1,7 @@
-class Work
-		def read_from_console
-		line = gets.chomp.downcase.to_s
+require "rexml/document"
+
+	def read_from_console
+		line = gets.chomp.to_s
 		line = line.split(//)#ділить на массив
 		w = ""
 			for item in line do #перевіряє массив на букву"і"
@@ -13,6 +14,7 @@ class Work
 		return w.to_s#збирає в масив
 		
 	end
+	
 
 	def write_in_file(choice)
 		to_bay = Books_and_Films.new
@@ -50,67 +52,73 @@ class Work
 		
 		
 	end 
-end 
+ 
 
 
-class Books_and_Films 
-	def what(b)
-		work = Work.new
-		puts 'Що бажаєте переглянути з товару? '
-		choice = work.read_from_console
-	 
-		if b.has_key?(choice)
-			a = b[choice]
-			puts a.to_s
-		elsif choice == "все"
-			puts b.to_s
-		else
-			puts 'Запит не виконано'
-		end 
+ 
+	def what(choice, doc)
+		goods = Hash.new#створює асофційний масив 
+		
+		doc.elements.each("goods/#{choice}") do |item|#цикл по всім елементам дерева
+			name = item.attributes["name"] 
+			price = item.attributes["price"]# 
+			quantity = item.attributes["quantity"]
+			goods[name] ||=price
+			print "Назва: #{name}"
+			print " Ціна: #{price}"
+			puts " Кількість на складі: #{quantity}"
+			
+			
+		end
+		return goods
 	end
-	def way(choice)
-			current_path = File.dirname(__FILE__)
-			file_name = "#{choice}.txt"#створює назву файлу
-			return current_path + "/" + file_name#повертає шлях і назву
-	end
-	def openning(choice)
-		arr = []
-		file = File.new(way(choice))
-		arr += file.read.split("\n") 
-		file.close 
-		hash = Hash[*arr]
-		return hash
-	end
-end	
 
-to_bay = Books_and_Films.new
-work = Work.new
+	def to_buy(goods)
+		puts "Що бажаєте купити?"
+		choice = read_from_console
+		puts "Сумма покупки становить: #{goods[choice]}грн."
+	end 
+	
+	
+
+current_path = File.dirname(__FILE__)
+file_name = current_path + "/goods.xml"
+abort "Файл не знайдено" unless File.exist?(file_name)
+
+file = File.new(file_name)
+doc = REXML::Document.new(file)#створює копію xml
+
+file.close
 puts "Раді вас вітати в нашому магазині))
-Бажаєте переглянути книги чи фільми?"
-a = work.read_from_console
+Бажаєте переглянути книги, фільми чи пісні?"
+a =read_from_console
 
 
 
 if a == "книги"
-	choice = "book"
-	hash = to_bay.openning(choice)
-	
-	puts "В нас є такі книги: #{hash.keys}"
-	to_bay.what(hash)
+	choice = "books/book"
+	goods = what(choice, doc)
+	to_buy(goods)
 elsif a == "фільми"
-	choice = "film"
-	hash = to_bay.openning(choice)
-	puts "В нас є такі фільми: #{hash.keys}"
-	to_bay.what(hash)
+	choice = "films/film"
+	goods = what(choice, doc)
+	to_buy(goods)
+elsif a == "пісні"
+	choice = "musics/music"
+	goods = what(choice, doc)
+	to_buy(goods)
 elsif a == "все"
-	choice = "book"
-	hash1 = to_bay.openning(choice)
-	puts "В нас є такі книги: #{hash1.keys}"
-	choice = "film"
-	hash2 = to_bay.openning(choice)
-	puts "В нас є такі фільми: #{hash2.keys}"
-	book_and_film = hash1.merge(hash2)
-	to_bay.what(book_and_film)
+
+	choice = "books/book"
+	puts "Книги:"
+	goods = what(choice, doc)
+	choice = "films/film"
+	puts "Фільми:"
+	goods.merge!(what(choice, doc))
+	choice = "musics/music"
+	puts "Пісні:"
+	goods.merge!(what(choice, doc))
+	to_buy(goods)
 elsif a == "адмін"
 	puts 'Бажаєт додати чи видалити?'
 	b = work.read_from_console
